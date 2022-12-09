@@ -18,5 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/users',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
+Route::get('/users/page/{id}',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
 Route::get('/userTodos/{id}',[ClientControl::class,'getUserTodos'])->name('posts.getusertodos');

@@ -29,9 +29,43 @@ table {
     overflow: hidden;
     margin:0;
     padding:0;
+    width: 100em;
 }
 td a{
     display:block;
     color:#181818;
     text-decoration: none;
+}
+.btn-primary{
+    background-color: #AAC4FF;
+    border-color: #AAC4FF;
+    color:#FFFFFF;
+    min-width: 80px;
+}
+
+.btn-primary a{
+    color:#FFFFFF;
+    font-weight:500;
+}
+
+.btn-primary:hover{
+    background-color: #9dbaff;
+    border-color: #9dbaff;
+}
+
+.btn-secondary{
+    background-color: #B1B2FF;
+    border-color: #B1B2FF;
+    color:#FFFFFF;
+    min-width: 80px;
+}
+
+.btn-secondary a{
+    color:#FFFFFF;
+    font-weight:500;
+}
+
+.btn-secondary:hover{
+    background-color: #a5a6ff;
+    border-color: #a5a6ff;
 }

@@ -25,14 +25,15 @@
                 <tbody>
                     @foreach ($data as $todos)
                     <tr>
-                        <td>{{$todos['id']}}</td>
-                        <td>{{$todos['user_id']}}</td>
+                        <td width="5%">{{$todos['id']}}</td>
+                        <td width="5%">{{$todos['user_id']}}</td>
                         <td>{{$todos['title']}}</td>
                         <td>{{$todos['due_on']}}</td>
-                        <td>{{$todos['status']}}</td>
+                        <td width="10%">{{$todos['status']}}</td>
                     </tr>
                     @endforeach
                 </tbody>
+                
             </table>
         </div>
     </div>
