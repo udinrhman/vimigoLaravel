@@ -29,7 +29,7 @@ table {
     overflow: hidden;
     margin:0;
     padding:0;
-    width: 100em;
+    width: 100;
 }
 td a{
     display:block;
@@ -68,4 +68,28 @@ td a{
 .btn-secondary:hover{
     background-color: #a5a6ff;
     border-color: #a5a6ff;
+}
+.close{
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    padding:0;
+}
+.modal-header{
+    background-color: #D2DAFF;
+    padding:10px;
+    padding-top:2px;
+    padding-bottom:2px;
+}
+.modal-body{
+    background-color: #EEF1FF;
+    padding:10px;
+    padding-bottom:5px;
+}
+.modal-footer{
+    padding-top:5px;
+    padding:0;
+}
+.form-group{
+    margin-bottom: 10px;
 }
