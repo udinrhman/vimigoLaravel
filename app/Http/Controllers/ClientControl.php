@@ -17,4 +17,15 @@ class ClientControl extends Controller
 
         return view('userList',['data' => $data]);
     }
+
+    public function getUserTodos($id)
+    {
+        $response = Http::get('https://gorest.co.in/public/v2/users/'.$id.'/todos');
+        $response->json();
+
+        //$data = json_decode($response->getBody()); // returns an object
+        $data = json_decode($response->getBody(), true); // returns an array
+
+        return view('userTodos',['data' => $data]);
+    }
 }

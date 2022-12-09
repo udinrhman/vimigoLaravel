@@ -16,20 +16,20 @@
                 <thead class="table-custom">
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Gender</th>
+                        <th>User ID</th>
+                        <th>Title</th>
+                        <th>Due On</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $user)
+                    @foreach ($data as $todos)
                     <tr>
-                        <td><a href={{"userTodos/".$user['id']}}>{{$user['id']}}</a></td>
-                        <td>{{$user['name']}}</td>
-                        <td>{{$user['email']}}</td>
-                        <td>{{$user['gender']}}</td>
-                        <td>{{$user['status']}}</td>
+                        <td>{{$todos['id']}}</td>
+                        <td>{{$todos['user_id']}}</td>
+                        <td>{{$todos['title']}}</td>
+                        <td>{{$todos['due_on']}}</td>
+                        <td>{{$todos['status']}}</td>
                     </tr>
                     @endforeach
                 </tbody>

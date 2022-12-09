@@ -19,3 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('/users',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
+Route::get('/userTodos/{id}',[ClientControl::class,'getUserTodos'])->name('posts.getusertodos');
