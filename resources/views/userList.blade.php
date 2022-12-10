@@ -36,7 +36,7 @@
                             <td>{{$user['email']}}</td>
                             <td width="10%">{{$user['gender']}}</td>
                             <td width="10%">{{$user['status']}}</td>
-                            <td width="10%"><a href={{"../../userTodos/".$user['id']}}><button class="btn btn-primary">VIEW TODO</a></button></td>
+                            <td width="10%"><a href={{"../../profile/".$user['id']}}><button class="btn btn-primary">VIEW INFO</a></button></td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -49,7 +49,7 @@
             @if($page < $totalPages)<a href={{"/users/page/".$page+1}}><button class="btn btn-secondary">next</button></a>@endif
         </div>
 
-        <!-- Add Product Modal -->
+        <!-- Add User Modal -->
         <div class="modal fade" id="AddModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md">
                 <div class="modal-content">
@@ -61,7 +61,7 @@
                     </div>
                     <div class="modal-body">
                         <div id="result"></div>
-                        <form id="user_form" action="{{ route('store') }}">
+                        <form id="user_form" action="{{ route('adduser') }}">
                             <input type="hidden" id="token" value="{{ @csrf_token() }}">
                             <div class="form-group">
                                 <input type="text" class="form-control" name="name" id="name" placeholder="Name">
@@ -122,7 +122,7 @@
                             $(".modal-backdrop").remove();
                             $('#user_list').load(' #user_list');
                         } else if (response.status == 'fail') {
-                            let error = '<span style="color:#b34045">' + response.restmsg + '</span>';
+                            let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
                             $('#result').html(error);
                         }
                     });

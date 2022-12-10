@@ -42,7 +42,7 @@ class ClientControl extends Controller
         return view('userTodos', ['data' => $data]);
     }
 
-    public function store(Request $request)
+    public function adduser(Request $request)
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -66,7 +66,7 @@ class ClientControl extends Controller
                 if($response->successful()=='true'){
                     return response()->json(['status' => 'success']);
                 }else{
-                    return response()->json(['status' => 'fail', 'restmsg' => 'Please try again with different info']);
+                    return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
                 }
                 
                 
@@ -75,13 +75,45 @@ class ClientControl extends Controller
 
     public function getUserProfile($id)
     {
-        $response = Http::withToken(config('services.rest.token'))
+        $userResponse = Http::withToken(config('services.rest.token'))
         ->get('https://gorest.co.in/public/v2/users/' . $id);
-        $response->json();
+        $userResponse->json();
+        $user = json_decode($userResponse->getBody(), true); // returns an array
 
-        //$data = json_decode($response->getBody()); // returns an object
-        $data = json_decode($response->getBody(), true); // returns an array
+        $postsResponse = Http::withToken(config('services.rest.token'))
+        ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
+        $postsResponse->json();
+        $post = json_decode($postsResponse->getBody(), true); // returns an array
+        $totalPost = count($post);
+        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost'=> $totalPost]);
+    }
 
-        return view('userProfile', ['user' => $data]);
+    public function addpost(Request $request)
+    {
+        $id = $request->input('user_id');
+        $validation = Validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        }
+        else {
+            $response = Http::withToken(config('services.rest.token'))
+                ->post('https://gorest.co.in/public/v2/users/'. $id .'/posts', [
+                    'user_id' => $request->input('user_id'),
+                    'title' => $request->input('title'),
+                    'body' => $request->input('body'),
+                ]);
+                $response->json();
+                if($response->successful()=='true'){
+                    return response()->json(['status' => 'success']);
+                }else{
+                    return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+                }
+                
+                
+        }
     }
 }

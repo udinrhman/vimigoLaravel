@@ -166,14 +166,14 @@ td a{
 
 .email {
 	font-size: 20px;
-	color: #B1B2FF;
-	padding-left: 40px;
+	color: #AAC4FF;
+	padding-left: 20px;
 }
 
 .stats {
 	font-size: 20px;
-	color: #B1B2FF;
-	padding-left: 40px;
+	color: #AAC4FF;
+	padding-left: 20px;
 }
 
 .twPc-ArrangeSizeFit {
@@ -196,11 +196,27 @@ td a{
 	color: #949494;
 	text-decoration: none;
 }
-.bio {
-	background-color: #B1B2FF;
+.resultTotal{
+    color:#AAC4FF;
+    font-size: 15px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    width:fit-content;
+    margin-bottom:5px;
+    padding:5px;
+}
+.posts {
+	background-color: #D2DAFF;
 	border-radius: 5px;
 	color: #F5F5F5;
 	font-size: 20px;
 	font-weight: 500;
 	padding: 20px;
+    text-shadow: -1px 0px 4px rgba(0, 0, 0, 0.075);
+}
+.post{
+    background-color: #B1B2FF;
+	border-radius: 5px;
+    padding:10px;
+    margin-bottom: 10px;
 }
