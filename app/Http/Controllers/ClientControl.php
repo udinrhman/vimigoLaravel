@@ -11,7 +11,7 @@ class ClientControl extends Controller
     public function getAllUser($page)
     {
         $response = Http::withToken(config('services.rest.token'))
-        ->get('https://gorest.co.in/public/v2/users');
+            ->get('https://gorest.co.in/public/v2/users');
         $response->json();
 
         //$data = json_decode($response->getBody()); // returns an object
@@ -30,31 +30,18 @@ class ClientControl extends Controller
         return view('userList', ['data' => $dataArray, 'page' => $page, 'totalPages' => $totalPages]);
     }
 
-    public function getUserTodos($id)
-    {
-        $response = Http::withToken(config('services.rest.token'))
-        ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
-        $response->json();
-
-        //$data = json_decode($response->getBody()); // returns an object
-        $data = json_decode($response->getBody(), true); // returns an array
-
-        return view('userTodos', ['data' => $data]);
-    }
-
     public function adduser(Request $request)
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email:filter', 'max:255'],
-            'gender' => 'required',
-            'status' => 'required',
+            'gender' => ['required'],
+            'status' => ['required'],
         ]);
 
         if ($validation->fails()) {
             return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
-        }
-        else {
+        } else {
             $response = Http::withToken(config('services.rest.token'))
                 ->post('https://gorest.co.in/public/v2/users/', [
                     'name' => $request->input('name'),
@@ -62,30 +49,35 @@ class ClientControl extends Controller
                     'gender' => $request->input('gender'),
                     'status' => $request->input('status'),
                 ]);
-                $response->json();
-                if($response->successful()=='true'){
-                    return response()->json(['status' => 'success']);
-                }else{
-                    return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
-                }
-                
-                
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
         }
     }
 
     public function getUserProfile($id)
     {
-        $userResponse = Http::withToken(config('services.rest.token'))
-        ->get('https://gorest.co.in/public/v2/users/' . $id);
+        $userResponse = Http::withToken(config('services.rest.token')) //get user info
+            ->get('https://gorest.co.in/public/v2/users/' . $id);
         $userResponse->json();
         $user = json_decode($userResponse->getBody(), true); // returns an array
 
-        $postsResponse = Http::withToken(config('services.rest.token'))
-        ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
+        $postsResponse = Http::withToken(config('services.rest.token')) //get user posts
+            ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
         $postsResponse->json();
         $post = json_decode($postsResponse->getBody(), true); // returns an array
         $totalPost = count($post);
-        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost'=> $totalPost]);
+
+        $todosResponse = Http::withToken(config('services.rest.token')) //get user posts
+            ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
+        $todosResponse->json();
+        $todo = json_decode($todosResponse->getBody(), true); // returns an array
+        $totalTodo = count($todo);
+
+        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost' => $totalPost, 'todo' => $todo, 'totalTodo' => $totalTodo,]);
     }
 
     public function addpost(Request $request)
@@ -98,22 +90,74 @@ class ClientControl extends Controller
 
         if ($validation->fails()) {
             return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
-        }
-        else {
+        } else {
             $response = Http::withToken(config('services.rest.token'))
-                ->post('https://gorest.co.in/public/v2/users/'. $id .'/posts', [
+                ->post('https://gorest.co.in/public/v2/users/' . $id . '/posts', [ //add post for specific user
                     'user_id' => $request->input('user_id'),
                     'title' => $request->input('title'),
                     'body' => $request->input('body'),
                 ]);
-                $response->json();
-                if($response->successful()=='true'){
-                    return response()->json(['status' => 'success']);
-                }else{
-                    return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
-                }
-                
-                
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
+        }
+    }
+
+    public function addtodo(Request $request)
+    {
+        $id = $request->input('user_id');
+        $validation = Validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:100'],
+            'due_on' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        } else {
+            $response = Http::withToken(config('services.rest.token'))
+                ->post('https://gorest.co.in/public/v2/users/' . $id . '/todos', [ //add todos for specific user
+                    'user_id' => $request->input('user_id'),
+                    'title' => $request->input('title'),
+                    'due_on' => $request->input('due_on'),
+                    'status' => $request->input('status'),
+                ]);
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
+        }
+    }
+
+    public function edittodo(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'title' => 'required',
+            'due_on' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        } else {
+            $id = $request->input('id');
+            $response = Http::withToken(config('services.rest.token'))
+                ->put('https://gorest.co.in/public/v2/todos/' . $id, [ //edit todo
+                    'title' => $request->input('title'),
+                    'due_on' => $request->input('due_on'),
+                    'status' => $request->input('status'),
+                ]);
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
         }
     }
 }

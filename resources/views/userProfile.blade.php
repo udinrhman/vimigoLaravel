@@ -35,32 +35,122 @@
                 </div>
                 <hr>
 
-                <div class="container-fluid" style="padding:0;padding-bottom:20px;">
+                <div class="container-fluid" style="padding:0;padding-bottom:10px;">
                     <div class="card-body" style="width:100%">
                         <button class="btn btn-primary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddPostModal">ADD POSTS</button>
-
-                        <div class="posts" id="user_posts">
-                            <div class="resultTotal">
-                                Total Posts: <span style="font-weight:600">{{$totalPost}}</span> posts
+                        <div class="posts">
+                            <div id="user_posts">
+                                <div class="resultTotal">
+                                    Total Posts: <span style="font-weight:600">{{$totalPost}}</span>
+                                </div>
+                                @if($totalPost == 0)
+                                <p style="color:#FFFFFF">This user don't have any posts.</p>
+                                @else
+                                @foreach($post as $posts)
+                                <div class="post">
+                                    <p><span style="font-weight:600">Title: </span>{{$posts['title']}}</p>
+                                    <p><span style="font-weight:600">Body: </span>{{$posts['body']}}</p>
+                                    <p style="text-align:right;font-size:15px;margin-bottom:0;">posted by #{{$posts['user_id']}}</p>
+                                </div>
+                                @endforeach
+                                @endif
                             </div>
-                            @if($totalPost == 0)
-                            <p>This user don't have any posts.</p>
-                            @else
-                            @foreach($post as $posts)
-                            <div class="post">
-                                <p><span style="font-weight:600">Title: </span>{{$posts['title']}}</p>
-                                <p><span style="font-weight:600">Body: </span>{{$posts['body']}}</p>
-                                <p style="text-align:right;font-size:15px;margin-bottom:0;">posted by #{{$posts['user_id']}}</p>
-                            </div>
-
-                            @endforeach
-
-                            @endif
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <div class="container-fluid" style="padding:0;padding-bottom:10px;">
+                    <div class="card-body" style="width:100%">
+                        <button class="btn btn-primary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddTodoModal">ADD TODOS</button>
+                        <div class="posts">
+                            <div id="user_todos">
+                                <div class="resultTotal">
+                                    Total Todos: <span style="font-weight:600">{{$totalTodo}}</span>
+                                </div>
+                                @if($totalTodo == 0)
+                                <p style="color:#FFFFFF">This user don't have any todo list.</p>
+                                @else
+                                @php
+                                $i = 0;
+                                @endphp
+                                @foreach($todo as $todos)
+
+                                <div class="post">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p><span style="font-weight:600">Title: </span>{{$todos['title']}}</p>
+                                        </div>
+                                        <div class="col">
+                                            <p><span style="font-weight:600">Due on: </span>{{$todos['due_on']}}</p>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align:left">
+                                            <p><span style="font-weight:600">Status: </span>{{$todos['status']}}</p>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align:right">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditTodoModal{{$i}}">EDIT</button> <button class="btn btn-danger">DELETE</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Edit Todos Modal -->
+                                <div class="modal fade EditTodoModal" id="EditTodoModal{{$i}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-md">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Todo</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="todoResult"></div>
+                                                <form class="editTodo_form" action="{{ route('edittodo') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                    <input type="hidden" class="id" name="id" id="id" value="{{$todos['id']}}">
+                                                    <input type="hidden" class="user_id" name="user_id" id="user_id" value="{{$todos['user_id']}}">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control title" name="title" id="title" value="{{$todos['title']}}" placeholder="Title">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="datetime-local" class="form-control due_on" name="due_on" id="due_on" value="{{ date('Y-m-d\TH:i', strtotime($todos['due_on'])) }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <select class="form-control status" name="status" id="status">
+                                                            <option disabled>-- select status --</option>
+                                                            @if($todos['status']=='pending')
+                                                            <option selected value="pending">pending</option>
+                                                            <option value="completed">completed</option>
+                                                            @else
+                                                            <option value="pending">pending</option>
+                                                            <option selected value="completed">completed</option>
+                                                            @endif
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="reset" class="btn btn-light">RESET</button>
+                                                        <button type="submit" class="btn btn-secondary" name="edit" id="edit">UPDATE</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @php
+                                $i = $i+1;
+                                @endphp
+                                @endforeach
+                                @endif
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
     </div>
 
@@ -69,13 +159,13 @@
         <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add User</h5>
+                    <h5 class="modal-title">Add Post</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="result"></div>
+                    <div id="postResult"></div>
                     <form id="post_form" action="{{ route('addpost') }}">
                         <input type="hidden" id="token" value="{{ @csrf_token() }}">
                         <input type="hidden" name="user_id" id="user_id" value="{{ $user['id'] }}">
@@ -89,6 +179,45 @@
                         <div class="modal-footer">
                             <button type="reset" class="btn btn-light">RESET</button>
                             <button type="submit" class="btn btn-secondary">ADD</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Todos Modal -->
+    <div class="modal fade" id="AddTodoModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Todo</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="todoResult"></div>
+                    <form id="todo_form" action="{{ route('addtodo') }}">
+                        <input type="hidden" id="token2" value="{{ @csrf_token() }}">
+                        <input type="hidden" name="user_id" id="user_id2" value="{{ $user['id'] }}">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="title" id="title2" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                            <input type="datetime-local" class="form-control" name="due_on" id="due_on2">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="status" id="status2">
+                                <option selected disabled>-- select status --</option>
+                                <option value="pending">pending</option>
+                                <option value="completed">completed</option>
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-light">RESET</button>
+                            <button type="submit" class="btn btn-secondary submit">ADD</button>
                         </div>
                     </form>
                 </div>
@@ -115,7 +244,7 @@
                     function(response) {
                         if (response.code == 400) {
                             let error = '<span style="color:#b34045">' + response.msg + '</span>';
-                            $('#result').html(error);
+                            $('#postResult').html(error);
                         }
                         if (response.status == 'success') {
                             $('#AddPostModal').modal('hide');
@@ -123,9 +252,68 @@
                             $('#user_posts').load(' #user_posts');
                         } else if (response.status == 'fail') {
                             let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
-                            $('#result').html(error);
+                            $('#postResult').html(error);
                         }
                     });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#todo_form').submit(function(e) {
+                e.preventDefault();
+                let url = $(this).attr('action');
+
+                $.post(url, {
+                        '_token': $('#token2').val(),
+                        user_id: $('#user_id2').val(),
+                        title: $('#title2').val(),
+                        due_on: $('#due_on2').val(),
+                        status: $('#status2').val(),
+                    },
+                    function(response) {
+                        if (response.code == 400) {
+                            let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                            $('#todoResult').html(error);
+                        }
+                        if (response.status == 'success') {
+                            $('#AddTodoModal').modal('hide');
+                            $(".modal-backdrop").remove();
+                            $('#user_todos').load(' #user_todos');
+                        } else if (response.status == 'fail') {
+                            let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                            $('#todoResult').html(error);
+                        }
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.editTodo_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('.todoResult').html(error);
+                    }
+                    if (response.status == 'success') {
+                        $('.EditTodoModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_todos').load(' #user_todos');
+                    } else if (response.status == 'fail') {
+                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        $('.todoResult').html(error);
+                    }
+                },
             });
         });
     </script>
