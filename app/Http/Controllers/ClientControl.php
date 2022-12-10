@@ -72,4 +72,16 @@ class ClientControl extends Controller
                 
         }
     }
+
+    public function getUserProfile($id)
+    {
+        $response = Http::withToken(config('services.rest.token'))
+        ->get('https://gorest.co.in/public/v2/users/' . $id);
+        $response->json();
+
+        //$data = json_decode($response->getBody()); // returns an object
+        $data = json_decode($response->getBody(), true); // returns an array
+
+        return view('userProfile', ['user' => $data]);
+    }
 }

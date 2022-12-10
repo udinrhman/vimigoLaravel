@@ -21,3 +21,4 @@ Route::get('/', function () {
 Route::get('/users/page/{id}',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
 Route::get('/userTodos/{id}',[ClientControl::class,'getUserTodos'])->name('posts.getusertodos');
 Route::post('/addUser', [ClientControl::class,'store'])->name('store');
+Route::get('/profile/{id}',[ClientControl::class,'getUserProfile'])->name('posts.getuserprofile');
