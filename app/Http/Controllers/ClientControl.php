@@ -160,6 +160,19 @@ class ClientControl extends Controller
         }
     }
 
+    public function deletepost(Request $request)
+    {
+        $id = $request->input('id');
+        $response = Http::withToken(config('services.rest.token'))
+            ->delete('https://gorest.co.in/public/v2/posts/' . $id);
+        $response->json();
+        if ($response->successful() == 'true') {
+            return response()->json(['code' => 200, 'status' => 'Successfully Deleted']);
+        } else {
+            return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+        }
+    }
+
     public function addtodo(Request $request)
     {
         $id = $request->input('user_id');

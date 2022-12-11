@@ -129,7 +129,8 @@ td a {
     background-color: #ff574d;
 }
 .DeleteModal .modal-body{
-    background-color: #ffcac6;
+    background-color: #FFFFFF;
+    color:#b34045;
 }
 
 .alert {
@@ -141,6 +142,11 @@ td a {
 	border-radius: 5px;
     z-index: 999;
 	width: 200px;
+}
+
+.error-msg{
+    color:#b34045;
+    font-size:15px;
 }
 
 /* ----------------profile card------------ */

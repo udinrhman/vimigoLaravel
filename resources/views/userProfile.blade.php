@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <div class="User">
-                            <span class="name">{{$user['name']}}</span>&nbsp&nbsp<span class="username">#{{$user['id']}}</span><button style="float:right;margin-right:10px" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#EditUserModal">EDIT USER</button>
+                            <span class="name">{{$user['name']}}</span>&nbsp&nbsp<span class="username">#{{$user['id']}}</span><button style="float:right;margin-right:10px" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditUserModal">EDIT USER</button>
                         </div><br>
                         <div class="info">
                             <div id="info-details">
@@ -43,7 +43,7 @@
                 <hr>
                 <div class="container-fluid" style="padding:0;padding-bottom:10px;">
                     <div class="card-body" style="width:100%">
-                        <button class="btn btn-primary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddPostModal">ADD POSTS</button>
+                        <button class="btn btn-secondary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddPostModal">ADD POSTS</button>
                         <div class="posts">
                             <div id="user_posts">
                                 <div class="resultTotal">
@@ -77,7 +77,7 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="postResult"></div>
+                                                <div class="postResult" style="font-size:16px;font-weight:lighter"></div>
                                                 <form class="editPost_form" action="{{ route('editpost') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
@@ -99,6 +99,33 @@
                                     </div>
                                 </div>
 
+                                <!-- Delete Post Modal -->
+                                <div class="modal fade DeleteModal" id="DeletePostModal{{$x}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="postResult"></div>
+                                                <form class="deletePost_form" action="{{ route('deletepost') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                    <input type="hidden" class="id" name="id" id="id" value="{{$posts['id']}}">
+                                                    <p>Are you sure you want to delete this Post?
+                                                    <p>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-danger">DELETE</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 @php
                                 $x = $x+1;
                                 @endphp
@@ -111,7 +138,7 @@
 
                 <div class="container-fluid" style="padding:0;padding-bottom:10px;">
                     <div class="card-body" style="width:100%">
-                        <button class="btn btn-primary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddTodoModal">ADD TODOS</button>
+                        <button class="btn btn-secondary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddTodoModal">ADD TODOS</button>
                         <div class="posts">
                             <div id="user_todos">
                                 <div class="resultTotal">
@@ -154,7 +181,7 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="todoResult"></div>
+                                                <div class="todoResult" style="font-size:16px;font-weight:lighter"></div>
                                                 <form class="editTodo_form" action="{{ route('edittodo') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
@@ -208,7 +235,6 @@
                                                     <p>Are you sure you want to delete this todo?
                                                     <p>
                                                     <div class="modal-footer">
-                                                        <button type="reset" class="btn btn-light">RESET</button>
                                                         <button type="submit" class="btn btn-danger">DELETE</button>
                                                     </div>
                                                 </form>
@@ -380,16 +406,16 @@
                         $('.userResult').html(error);
                     }
                     if (response.code == '200') {
+                        $('#icon').load(' #icon'); //change profile image depending on updated gender
                         $('.name').load(' .name');
                         $('#info-details').load(' #info-details');
-                        $('#icon').load(' #icon'); //change profile image depending on updated gender
                         $('#EditUserModal').modal('hide');
                         $(".modal-backdrop").remove();
                         $('#notification').html(response.status);
-                        $("#notification").addClass('alert alert-success')
+                        $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
-                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                         $('.userResult').html(error);
                     }
                 },
@@ -422,7 +448,7 @@
                             $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
                             $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                         } else if (response.status == 'fail') {
-                            let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                            let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                             $('#postResult').html(error);
                         }
                     });
@@ -453,7 +479,34 @@
                         $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
-                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('.postResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.deletePost_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == '200') {
+                        $('.DeleteModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_posts').load(' #user_posts');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-success').addClass('alert alert-danger');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                         $('.postResult').html(error);
                     }
                 },
@@ -487,7 +540,7 @@
                             $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
                             $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                         } else if (response.status == 'fail') {
-                            let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                            let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                             $('#todoResult').html(error);
                         }
                     });
@@ -518,7 +571,7 @@
                         $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
-                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                         $('.todoResult').html(error);
                     }
                 },
@@ -545,7 +598,7 @@
                         $("#notification").removeClass('alert alert-success').addClass('alert alert-danger');
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
-                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                         $('.todoResult').html(error);
                     }
                 },
