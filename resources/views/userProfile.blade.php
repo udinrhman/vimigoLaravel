@@ -10,31 +10,37 @@
 </head>
 
 <body>
+    <div id="notification"></div>
     <div class="container-fluid">
         <div class="row" style="height:auto;">
-
             <div class="card profile" style="border-bottom: none">
                 <div class="card-body" style="padding:0">
                     <div class="twPc-div">
                         <div class="twPc-bg " style="background-image: url('https://wallpaperaccess.com/full/6548582.jpg');"></div>
                         <div class="avatarLink">
-                            @if($user['gender'] == 'male')
-                            <!-- profile icon change according to gender -->
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkfF6nBhidhIzL330CYtg70I8tpDBGJ2YjBPnE9D9gY0iLmGu563WBIab4KBexSDv7kG8&usqp=CAU" width="100%" height="100%" style="object-fit:cover;" class="profilePic">
-                            @else
-                            <img src="https://www.kindpng.com/picc/m/163-1636340_user-avatar-icon-avatar-transparent-user-icon-png.png" width="100%" height="100%" style="object-fit:cover;" class="profilePic">
-                            @endif
+                            <div id="icon">
+                                @if($user['gender'] == 'male')
+                                <!-- profile icon change according to gender -->
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkfF6nBhidhIzL330CYtg70I8tpDBGJ2YjBPnE9D9gY0iLmGu563WBIab4KBexSDv7kG8&usqp=CAU" width="100%" height="100%" style="object-fit:cover;" class="profilePic">
+                                @else
+                                <img src="https://www.kindpng.com/picc/m/163-1636340_user-avatar-icon-avatar-transparent-user-icon-png.png" width="100%" height="100%" style="object-fit:cover;" class="profilePic">
+                                @endif
+                            </div>
                         </div>
                         <div class="User">
-                            <span class="name">{{$user['name']}}</span>&nbsp&nbsp<span class="username">#{{$user['id']}}</span>
-                        </div><br><br>
-                        <div class="email"><span style="color:#B1B2FF;font-weight:600">Email:</span> {{$user['email']}}</div>
-                        <div class="stats"><span style="color:#B1B2FF;font-weight:600">Gender:</span> {{$user['gender']}}</div>
-                        <div class="stats"><span style="color:#B1B2FF;font-weight:600">Status:</span> {{$user['status']}}</div>
+                            <span class="name">{{$user['name']}}</span>&nbsp&nbsp<span class="username">#{{$user['id']}}</span><button style="float:right;margin-right:10px" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#EditUserModal">EDIT USER</button>
+                        </div><br>
+                        <div class="info">
+                            <div id="info-details">
+                                <span style="color:#B1B2FF;font-weight:600">Email:</span> {{$user['email']}} <br>
+                                <span style="color:#B1B2FF;font-weight:600">Gender:</span> {{$user['gender']}} <br>
+                                <span style="color:#B1B2FF;font-weight:600">Status:</span> {{$user['status']}}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <hr>
-
                 <div class="container-fluid" style="padding:0;padding-bottom:10px;">
                     <div class="card-body" style="width:100%">
                         <button class="btn btn-primary" style="margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#AddPostModal">ADD POSTS</button>
@@ -44,7 +50,7 @@
                                     Total Posts: <span style="font-weight:600">{{$totalPost}}</span>
                                 </div>
                                 @if($totalPost == 0)
-                                <p style="color:#FFFFFF">This user don't have any posts.</p>
+                                <p style="color:#FFFFFF">This user doesn't have any posts.</p>
                                 @else
                                 @foreach($post as $posts)
                                 <div class="post">
@@ -68,7 +74,7 @@
                                     Total Todos: <span style="font-weight:600">{{$totalTodo}}</span>
                                 </div>
                                 @if($totalTodo == 0)
-                                <p style="color:#FFFFFF">This user don't have any todo list.</p>
+                                <p style="color:#FFFFFF">This user doesn't have any todo list.</p>
                                 @else
                                 @php
                                 $i = 0;
@@ -87,7 +93,7 @@
                                             <p><span style="font-weight:600">Status: </span>{{$todos['status']}}</p>
                                         </div>
                                         <div class="col-sm-2" style="text-align:right">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditTodoModal{{$i}}">EDIT</button> <button class="btn btn-danger">DELETE</button>
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditTodoModal{{$i}}">EDIT</button> <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteTodoModal{{$i}}">DELETE</button>
                                         </div>
                                     </div>
 
@@ -131,7 +137,35 @@
 
                                                     <div class="modal-footer">
                                                         <button type="reset" class="btn btn-light">RESET</button>
-                                                        <button type="submit" class="btn btn-secondary" name="edit" id="edit">UPDATE</button>
+                                                        <button type="submit" class="btn btn-secondary">UPDATE</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Todos Modal -->
+                                <div class="modal fade DeleteModal" id="DeleteTodoModal{{$i}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="todoResult"></div>
+                                                <form class="deleteTodo_form" action="{{ route('deletetodo') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                    <input type="hidden" class="id" name="id" id="id" value="{{$todos['id']}}">
+                                                    <p>Are you sure you want to delete this todo?
+                                                    <p>
+                                                    <div class="modal-footer">
+                                                        <button type="reset" class="btn btn-light">RESET</button>
+                                                        <button type="submit" class="btn btn-danger">DELETE</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -150,6 +184,63 @@
                 </div>
 
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="EditUserModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="userResult"></div>
+                    <form id="editUser_form" action="{{ route('edituser') }}" method="POST">
+                        @csrf
+                        <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                        <input type="hidden" class="id" name="id" id="id" value="{{$user['id']}}">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{$user['name']}}">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{$user['email']}}">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="gender" id="gender">
+                                <option disabled>-- select gender --</option>
+                                @if($user['gender'] == 'male')
+                                <option selected value="male">male</option>
+                                <option value="female">female</option>
+                                @else
+                                <option value="male">male</option>
+                                <option selected value="female">female</option>
+                                @endif
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="status" id="status">
+                                <option disabled>-- select status --</option>
+                                @if($user['status'] == 'active')
+                                <option selected value="active">active</option>
+                                <option value="inactive">inactive</option>
+                                @else
+                                <option value="active">active</option>
+                                <option selected value="inactive">inactive</option>
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-light">RESET</button>
+                            <button type="submit" class="btn btn-secondary">UPDATE</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -230,6 +321,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
     <script>
+        $(document).on('submit', '#editUser_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == '200') {
+                        $('.name').load(' .name');
+                        $('#info-details').load(' #info-details');
+                        $('#icon').load(' #icon'); //change profile image depending on updated gender
+                        $('#EditUserModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#notification').html(response.status);
+                        $("#notification").addClass('alert alert-success')
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        $('.todoResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
         $(document).ready(function() {
             $('#post_form').submit(function(e) {
                 e.preventDefault();
@@ -246,10 +366,13 @@
                             let error = '<span style="color:#b34045">' + response.msg + '</span>';
                             $('#postResult').html(error);
                         }
-                        if (response.status == 'success') {
+                        if (response.code == 200) {
                             $('#AddPostModal').modal('hide');
                             $(".modal-backdrop").remove();
                             $('#user_posts').load(' #user_posts');
+                            $('#notification').html(response.status);
+                            $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                            $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                         } else if (response.status == 'fail') {
                             let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
                             $('#postResult').html(error);
@@ -277,10 +400,13 @@
                             let error = '<span style="color:#b34045">' + response.msg + '</span>';
                             $('#todoResult').html(error);
                         }
-                        if (response.status == 'success') {
+                        if (response.code == 200) {
                             $('#AddTodoModal').modal('hide');
                             $(".modal-backdrop").remove();
                             $('#user_todos').load(' #user_todos');
+                            $('#notification').html(response.status);
+                            $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                            $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                         } else if (response.status == 'fail') {
                             let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
                             $('#todoResult').html(error);
@@ -305,10 +431,40 @@
                         let error = '<span style="color:#b34045">' + response.msg + '</span>';
                         $('.todoResult').html(error);
                     }
-                    if (response.status == 'success') {
-                        $('.EditTodoModal').modal('hide');
+                    if (response.code == 200) {
+                        $('#EditUserModal').modal('hide');
                         $(".modal-backdrop").remove();
                         $('#user_todos').load(' #user_todos');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        $('.todoResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.deleteTodo_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == '200') {
+                        $('.DeleteModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_todos').load(' #user_todos');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-success').addClass('alert alert-danger');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
                         let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
                         $('.todoResult').html(error);
