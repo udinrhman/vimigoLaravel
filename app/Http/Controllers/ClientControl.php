@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientControl extends Controller
 {
-    public function getAllUser($page)
+    public function getAllUser($page) //list all user with pagination
     {
         $response = Http::withToken(config('services.rest.token'))
             ->get('https://gorest.co.in/public/v2/users');
@@ -30,7 +30,7 @@ class ClientControl extends Controller
         return view('userList', ['data' => $dataArray, 'page' => $page, 'totalPages' => $totalPages]);
     }
 
-    public function adduser(Request $request)
+    public function adduser(Request $request) //add new user
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -58,7 +58,42 @@ class ClientControl extends Controller
         }
     }
 
-    public function edituser(Request $request)
+    public function deleteuser(Request $request) //delete specific user
+    {
+        $id = $request->input('id');
+        $response = Http::withToken(config('services.rest.token'))
+            ->delete('https://gorest.co.in/public/v2/users/' . $id);
+        $response->json();
+        if ($response->successful() == 'true') {
+            return response()->json(['code' => 200, 'status' => 'Successfully Deleted']);
+        } else {
+            return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+        }
+    }
+
+    public function getUserProfile($id) //display user informations (user info, posts, todos)
+    {
+        $userResponse = Http::withToken(config('services.rest.token')) //get user info
+            ->get('https://gorest.co.in/public/v2/users/' . $id);
+        $userResponse->json();
+        $user = json_decode($userResponse->getBody(), true); // returns an array
+
+        $postsResponse = Http::withToken(config('services.rest.token')) //get user posts
+            ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
+        $postsResponse->json();
+        $post = json_decode($postsResponse->getBody(), true); // returns an array
+        $totalPost = count($post);
+
+        $todosResponse = Http::withToken(config('services.rest.token')) //get user posts
+            ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
+        $todosResponse->json();
+        $todo = json_decode($todosResponse->getBody(), true); // returns an array
+        $totalTodo = count($todo);
+
+        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost' => $totalPost, 'todo' => $todo, 'totalTodo' => $totalTodo,]);
+    }
+
+    public function edituser(Request $request) //edit specific user info
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -87,29 +122,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function getUserProfile($id)
-    {
-        $userResponse = Http::withToken(config('services.rest.token')) //get user info
-            ->get('https://gorest.co.in/public/v2/users/' . $id);
-        $userResponse->json();
-        $user = json_decode($userResponse->getBody(), true); // returns an array
-
-        $postsResponse = Http::withToken(config('services.rest.token')) //get user posts
-            ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
-        $postsResponse->json();
-        $post = json_decode($postsResponse->getBody(), true); // returns an array
-        $totalPost = count($post);
-
-        $todosResponse = Http::withToken(config('services.rest.token')) //get user posts
-            ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
-        $todosResponse->json();
-        $todo = json_decode($todosResponse->getBody(), true); // returns an array
-        $totalTodo = count($todo);
-
-        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost' => $totalPost, 'todo' => $todo, 'totalTodo' => $totalTodo,]);
-    }
-
-    public function addpost(Request $request)
+    public function addpost(Request $request) //add post for specific user
     {
         $id = $request->input('user_id');
         $validation = Validator::make($request->all(), [
@@ -135,7 +148,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function editpost(Request $request)
+    public function editpost(Request $request) //edit specific post 
     {
         $validation = Validator::make($request->all(), [
             'title' => ['required', 'string', 'max:255'],
@@ -160,7 +173,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function deletepost(Request $request)
+    public function deletepost(Request $request) //delete specific post
     {
         $id = $request->input('id');
         $response = Http::withToken(config('services.rest.token'))
@@ -173,7 +186,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function addtodo(Request $request)
+    public function addtodo(Request $request) //add new post for specific user
     {
         $id = $request->input('user_id');
         $validation = Validator::make($request->all(), [
@@ -201,7 +214,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function edittodo(Request $request)
+    public function edittodo(Request $request) //edit specific todos
     {
         $validation = Validator::make($request->all(), [
             'title' => 'required',
@@ -228,7 +241,7 @@ class ClientControl extends Controller
         }
     }
 
-    public function deletetodo(Request $request)
+    public function deletetodo(Request $request) //delete specific todos
     {
         $id = $request->input('id');
         $response = Http::withToken(config('services.rest.token'))

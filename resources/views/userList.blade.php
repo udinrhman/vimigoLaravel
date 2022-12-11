@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <div class="container-fluid" ;>
+    <div id="notification"></div>
+    <div class="container-fluid">
         <div style="float:right;margin-bottom:10px;width:100%;display:block">
             <button class="btn btn-secondary" style="float:right" data-bs-toggle="modal" data-bs-target="#AddModal">ADD USER</button>
         </div>
@@ -25,10 +26,14 @@
                             <th>Email</th>
                             <th>Gender</th>
                             <th>Status</th>
-                            <th style="width:fit-content"></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                        $i = 0
+                        @endphp
                         @foreach ($data as $user)
                         <tr>
                             <td width="5%">{{$user['id']}}</td>
@@ -37,11 +42,51 @@
                             <td width="10%">{{$user['gender']}}</td>
                             <td width="10%">{{$user['status']}}</td>
                             <td width="10%"><a href={{"../../profile/".$user['id']}}><button class="btn btn-primary">VIEW INFO</a></button></td>
+                            <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteUserModal{{$i}}">DELETE</button></td>
                         </tr>
+                        @php
+                        $i = $i+1;
+                        @endphp
                         @endforeach
                     </tbody>
                 </table>
 
+                <div id="deleteModal">
+                    @php
+                    $x = 0
+                    @endphp
+                    @foreach ($data as $userDelete)
+                    <!-- Delete User Modal -->
+                    <div class="modal fade DeleteModal" id="DeleteUserModal{{$x}}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="userResult"></div>
+                                    <form class="deleteUser_form" action="{{ route('deleteuser') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                        <input type="hidden" class="id" name="id" id="id" value="{{$userDelete['id']}}">
+                                        <p>Are you sure you want to delete this User?
+                                        <p>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-danger">DELETE</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @php
+                    $x = $x+1;
+                    @endphp
+                    @endforeach
+                </div>
             </div>
         </div>
         <div style="float:left;margin-top:10px">
@@ -126,6 +171,34 @@
                             $('#result').html(error);
                         }
                     });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.deleteUser_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == '200') {
+                        $('.DeleteModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_list').load(' #user_list');
+                        $('#deleteModal').load(' #deleteModal');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-success').addClass('alert alert-danger');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('.userResult').html(error);
+                    }
+                },
             });
         });
     </script>

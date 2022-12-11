@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    @if(!empty($user['id']))
     <div id="notification"></div>
     <div class="container-fluid">
         <div class="row" style="height:auto;">
@@ -317,7 +318,7 @@
 
     <!-- Add Posts Modal -->
     <div class="modal fade" id="AddPostModal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Post</h5>
@@ -334,7 +335,7 @@
                             <input type="text" class="form-control" name="title" id="title" placeholder="Title">
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" name="body" id="body" placeholder="Body" rows="5"></textarea>
+                            <textarea class="form-control" name="body" id="body" placeholder="Body" rows="7"></textarea>
                         </div>
 
                         <div class="modal-footer">
@@ -564,7 +565,7 @@
                         $('.todoResult').html(error);
                     }
                     if (response.code == 200) {
-                        $('#EditUserModal').modal('hide');
+                        $('.EditTodoModal').modal('hide');
                         $(".modal-backdrop").remove();
                         $('#user_todos').load(' #user_todos');
                         $('#notification').html(response.status);
@@ -605,6 +606,10 @@
             });
         });
     </script>
+    @else
+        <div class="alert alert-danger">This user does not <b>exist</b> or has been <b>deleted</b>.</div>
+        <a href="../users/page/1"><button class="btn btn-primary" >View User List</button></a>
+    @endif
 </body>
 
 </html>

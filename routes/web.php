@@ -22,6 +22,7 @@ Route::get('/users/page/{id}',[ClientControl::class,'getAllUser'])->name('posts.
 Route::post('/addUser', [ClientControl::class,'adduser'])->name('adduser');
 Route::get('/profile/{id}',[ClientControl::class,'getUserProfile'])->name('posts.getuserprofile');
 Route::post('/editUser', [ClientControl::class,'edituser'])->name('edituser');
+Route::post('/deleteUser', [ClientControl::class,'deleteuser'])->name('deleteuser');
 
 Route::post('/addPost', [ClientControl::class,'addpost'])->name('addpost');
 Route::post('/editPost', [ClientControl::class,'editpost'])->name('editpost');

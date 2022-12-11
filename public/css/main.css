@@ -133,11 +133,11 @@ td a {
     color:#b34045;
 }
 
-.alert {
+#notification {
     text-align: center;
 	padding: 10px;
 	position: absolute;
-	top: 70%;
+	top: 50%;
     right:3%;
 	border-radius: 5px;
     z-index: 999;
@@ -169,7 +169,7 @@ td a {
     background-position: 0 55%;
     background-size: cover;
     border-radius: 4px 4px 0 0;
-    height: 450px;
+    height: 350px;
     width: 100%;
     border: 1px solid #fff;
 }
