@@ -49,15 +49,59 @@
                                 <div class="resultTotal">
                                     Total Posts: <span style="font-weight:600">{{$totalPost}}</span>
                                 </div>
+                                @php
+                                $x = 0;
+                                @endphp
                                 @if($totalPost == 0)
                                 <p style="color:#FFFFFF">This user doesn't have any posts.</p>
                                 @else
                                 @foreach($post as $posts)
+                                <div style="float:right;margin:10px;">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditPostModal{{$x}}">EDIT</button> <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeletePostModal{{$x}}">DELETE</button>
+                                </div>
+
                                 <div class="post">
                                     <p><span style="font-weight:600">Title: </span>{{$posts['title']}}</p>
                                     <p><span style="font-weight:600">Body: </span>{{$posts['body']}}</p>
                                     <p style="text-align:right;font-size:15px;margin-bottom:0;">posted by #{{$posts['user_id']}}</p>
                                 </div>
+
+                                <!-- Edit Post Modal -->
+                                <div class="modal fade EditPostModal" id="EditPostModal{{$x}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-md">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Post</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="postResult"></div>
+                                                <form class="editPost_form" action="{{ route('editpost') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                    <input type="hidden" name="id" id="id" value="{{ $posts['id'] }}">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="title" id="title" placeholder="Title" value="{{$posts['title']}}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" name="body" id="body" placeholder="Body" rows="5">{{$posts['body']}}</textarea>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="reset" class="btn btn-light">RESET</button>
+                                                        <button type="submit" class="btn btn-secondary">UPDATE</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @php
+                                $x = $x+1;
+                                @endphp
                                 @endforeach
                                 @endif
                             </div>
@@ -331,6 +375,10 @@
                 dataType: 'json',
                 contentType: false,
                 success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('.userResult').html(error);
+                    }
                     if (response.code == '200') {
                         $('.name').load(' .name');
                         $('#info-details').load(' #info-details');
@@ -342,7 +390,7 @@
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
                         let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
-                        $('.todoResult').html(error);
+                        $('.userResult').html(error);
                     }
                 },
             });
@@ -378,6 +426,37 @@
                             $('#postResult').html(error);
                         }
                     });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.editPost_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('.postResult').html(error);
+                    }
+                    if (response.code == 200) {
+                        $('.EditPostModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_posts').load(' #user_posts');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span style="color:#b34045">Error: ' + response.restmsg + '</span>';
+                        $('.postResult').html(error);
+                    }
+                },
             });
         });
     </script>

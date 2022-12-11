@@ -135,6 +135,31 @@ class ClientControl extends Controller
         }
     }
 
+    public function editpost(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string', 'max:500'],
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        } else {
+            $id = $request->input('id');
+            $response = Http::withToken(config('services.rest.token'))
+                ->put('https://gorest.co.in/public/v2/posts/' . $id, [ //edit todo
+                    'title' => $request->input('title'),
+                    'body' => $request->input('body'),
+                ]);
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['code' => 200, 'status' => 'Sucessfully Updated']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
+        }
+    }
+
     public function addtodo(Request $request)
     {
         $id = $request->input('user_id');

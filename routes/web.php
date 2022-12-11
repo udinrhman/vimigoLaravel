@@ -23,6 +23,7 @@ Route::post('/addUser', [ClientControl::class,'adduser'])->name('adduser');
 Route::get('/profile/{id}',[ClientControl::class,'getUserProfile'])->name('posts.getuserprofile');
 Route::post('/editUser', [ClientControl::class,'edituser'])->name('edituser');
 Route::post('/addPost', [ClientControl::class,'addpost'])->name('addpost');
+Route::post('/editPost', [ClientControl::class,'editpost'])->name('editpost');
 Route::post('/addTodos', [ClientControl::class,'addtodo'])->name('addtodo');
 Route::post('/editTodos', [ClientControl::class,'edittodo'])->name('edittodo');
 Route::post('/deleteTodos', [ClientControl::class,'deletetodo'])->name('deletetodo');
