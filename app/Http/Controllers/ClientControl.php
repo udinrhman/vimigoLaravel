@@ -8,6 +8,72 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientControl extends Controller
 {
+    public function home()
+    {
+        $response = Http::withToken(config('services.rest.token'))
+            ->get('https://gorest.co.in/public/v2/users');
+        $response->json();
+
+        //$data = json_decode($response->getBody()); // returns an object
+        $data = json_decode($response->getBody(), true); // returns an array
+
+        $page = !empty($page) ? (int) $page : 1;
+        $total = count($data); //total items in array  
+        $limit = 4;
+        $totalPages = ceil($total / $limit); //calculate total pages
+        $page = max($page, 1); //get 1 page when $page <= 0
+        $page = min($page, $totalPages); //get last page when $page > $totalPages
+        $offset = ($page - 1) * $limit;
+        if ($offset < 0) $offset = 0;
+        $dataArray = array_slice($data, $offset, $limit);
+
+        return view('userList', ['data' => $dataArray, 'page' => $page, 'totalPages' => $totalPages]);
+    }
+
+
+    public function filter(Request $request)
+    {
+        $id = $request->input('user_id');
+        $type = $request->input('type');
+        $validation = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'type' => 'required',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        } else {
+
+            if ($type == 'profile') {
+                return response()->json(['code' => 200, 'url' => url('profile/' . $id)]);
+            } else if ($type == 'todos') {
+                return response()->json(['code' => 200, 'url' => url('todos/' . $id . '/1')]);
+            }
+        }
+    }
+
+    public function getUserTodos($id, $page) //list all todos for specific user id
+    {
+        $response = Http::withToken(config('services.rest.token'))
+            ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
+        $response->json();
+
+        //$data = json_decode($response->getBody()); // returns an object
+        $data = json_decode($response->getBody(), true); // returns an array
+
+        $page = !empty($page) ? (int) $page : 1;
+        $total = count($data); //total items in array  
+        $limit = 4;
+        $totalPages = ceil($total / $limit); //calculate total pages
+        $page = max($page, 1); //get 1 page when $page <= 0
+        $page = min($page, $totalPages); //get last page when $page > $totalPages
+        $offset = ($page - 1) * $limit;
+        if ($offset < 0) $offset = 0;
+        $dataArray = array_slice($data, $offset, $limit);
+
+        return view('todos', ['data' => $dataArray, 'page' => $page, 'totalPages' => $totalPages, 'user_id' => $id]);
+    }
+
     public function getAllUser($page) //list all user with pagination
     {
         $response = Http::withToken(config('services.rest.token'))

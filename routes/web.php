@@ -13,10 +13,9 @@ use App\Http\Controllers\ClientControl;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ClientControl::class,'home']);
+Route::post('/filter', [ClientControl::class,'filter'])->name('filter');
+Route::get('/todos/{id}/{page}',[ClientControl::class,'getUserTodos'])->name('posts.getusertodos');
 
 Route::get('/users/page/{id}',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
 Route::post('/addUser', [ClientControl::class,'adduser'])->name('adduser');

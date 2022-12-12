@@ -12,7 +12,33 @@
 <body>
     @if(!empty($user['id']))
     <div id="notification"></div>
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding:0">
+        <form id="filterForm" action="{{ route('filter') }}" method="POST">
+            <div id="filterResult"></div>
+            @csrf
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                        <input type="text" class="form-control" name="user id" id="user_id" placeholder="User ID">
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <select class="form-control" name="type" id="type">
+                            <option selected disabled>User's What?</option>
+                            <option value="profile">profile</option>
+                            <option value="todos">todos</option>
+                            <option value="posts">posts</option>
+                            <option value="comments">comments</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">FILTER</button>
+                </div>
+            </div>
+        </form>
         <div class="row" style="height:auto;">
             <div class="card profile" style="border-bottom: none">
                 <div class="card-body" style="padding:0">
@@ -392,6 +418,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
     <script>
+        $(document).on('submit', '#filterForm', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('#filterResult').html(error);
+                    }
+                    if (response.code == '200') {
+                        window.location = response.url;
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('#filterResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
         $(document).on('submit', '#editUser_form', function(e) {
             e.preventDefault();
             $.ajax({
@@ -607,8 +659,8 @@
         });
     </script>
     @else
-        <div class="alert alert-danger">This user does not <b>exist</b> or has been <b>deleted</b>.</div>
-        <a href="../users/page/1"><button class="btn btn-primary" >View User List</button></a>
+    <div class="alert alert-danger">This user does not <b>exist</b> or has been <b>deleted</b>.</div>
+    <a href="../users/page/1"><button class="btn btn-primary">View User List</button></a>
     @endif
 </body>
 

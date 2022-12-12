@@ -7,8 +7,9 @@ body {
     font-family: 'Poppins', sans-serif;
     padding: 2%;
 }
-p{
-    margin-bottom:0;
+
+p {
+    margin-bottom: 0;
 }
 
 ::-webkit-scrollbar-track {
@@ -60,6 +61,11 @@ td a {
     display: block;
     color: #181818;
     text-decoration: none;
+}
+
+.paginationButton {
+    float: left;
+    margin-top: 10px
 }
 
 .btn-primary {
@@ -125,28 +131,29 @@ td a {
     margin-bottom: 10px;
 }
 
-.DeleteModal .modal-header{
+.DeleteModal .modal-header {
     background-color: #ff574d;
 }
-.DeleteModal .modal-body{
+
+.DeleteModal .modal-body {
     background-color: #FFFFFF;
-    color:#b34045;
+    color: #b34045;
 }
 
 #notification {
     text-align: center;
-	padding: 10px;
-	position: absolute;
-	top: 50%;
-    right:3%;
-	border-radius: 5px;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    right: 3%;
+    border-radius: 5px;
     z-index: 999;
-	width: 200px;
+    width: 200px;
 }
 
-.error-msg{
-    color:#b34045;
-    font-size:15px;
+.error-msg {
+    color: #b34045;
+    font-size: 15px;
 }
 
 /* ----------------profile card------------ */
@@ -221,7 +228,7 @@ td a {
 .info {
     font-size: 20px;
     color: #AAC4FF;
-    padding:20px;
+    padding: 20px;
 }
 
 .twPc-ArrangeSizeFit {
