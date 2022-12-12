@@ -160,9 +160,10 @@ td a {
 .profile {
     padding: 0px;
     border-radius: 5px;
-    border: 1px solid #fff;
     width: 100%;
+    margin:0;
 }
+
 
 .twPc-div {
     background: #fff none repeat scroll 0 0;

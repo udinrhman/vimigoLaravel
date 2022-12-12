@@ -40,7 +40,7 @@
             </div>
         </form>
         <div class="row" style="height:auto;">
-            <div class="card profile" style="border-bottom: none">
+            <div class="card profile" style="border:none;border-bottom: none">
                 <div class="card-body" style="padding:0">
                     <div class="twPc-div">
                         <div class="twPc-bg " style="background-image: url('https://wallpaperaccess.com/full/6548582.jpg');"></div>
@@ -459,9 +459,7 @@
                         $('.userResult').html(error);
                     }
                     if (response.code == '200') {
-                        $('#icon').load(' #icon'); //change profile image depending on updated gender
-                        $('.name').load(' .name');
-                        $('#info-details').load(' #info-details');
+                        $('.profile').load(' .profile');
                         $('#EditUserModal').modal('hide');
                         $(".modal-backdrop").remove();
                         $('#notification').html(response.status);
