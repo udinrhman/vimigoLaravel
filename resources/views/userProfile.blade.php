@@ -38,7 +38,8 @@
                 </div>
             </div>
         </form>
-        <div class="row" style="height:auto;">
+        <a href="/users/page/1"><button class="btn btn-secondary">HOME</button></a>
+        <div class="row" style="padding:10px">
             <div class="card profile" style="border:none;border-bottom: none">
                 <div class="card-body" style="padding:0">
                     <div class="twPc-div">
@@ -93,16 +94,53 @@
                                     <p><span style="font-weight:600">Body: </span>{{$posts['body']}}</p>
                                     <p style="text-align:right;font-size:15px;margin-bottom:0;">posted by #{{$posts['user_id']}}</p>
 
-                                    <div class="comments">@foreach($comment as $comments)
+                                    <div class="comments">
+                                        @php
+                                        $c = 0;
+                                        @endphp
+                                        @foreach($comment as $comments)
                                         @if($comments['post_id'] == $posts['id'])
                                         <div class="comment">
-                                            <p style="font-size:15px;"><b>{{$comments['name']}} [{{$comments['email']}}]</b>: {{$comments['body']}}</p>
+                                            <p style="font-size:15px;">
+                                                <b>{{$comments['name']}} [{{$comments['email']}}]</b>: {{$comments['body']}}
+                                                &nbsp&nbsp&nbsp&nbsp<span class="dlt-comment" data-bs-toggle="modal" data-bs-target="#DeleteCommentModal{{$c}}">DELETE</span>
+                                            </p>
                                         </div>
                                         @endif
+
+                                        <!-- Delete Comment Modal -->
+                                        <div class="modal fade DeleteModal" id="DeleteCommentModal{{$c}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Delete</h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="commentResult" style="font-size:16px;font-weight:lighter"></div>
+                                                        <form class="deleteComment_form" action="{{ route('deletecomment') }}" method="POST">
+                                                            @csrf
+                                                            Are you sure you want to delete this comment?
+                                                            <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                            <input type="hidden" name="id" id="id" value="{{ $comments['id'] }}">
+
+                                                            <div class="modal-footer">
+                                                                <button type="submit" class="btn btn-danger">DELETE</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @php
+                                        $c = $c + 1;
+                                        @endphp
                                         @endforeach
                                     </div>
 
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddCommentModal{{$x}}">ADD COMMENT FOR THIS POST</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddCommentModal{{$x}}">ADD COMMENT</button>
                                 </div>
 
                                 <!-- Add Comment Modal -->
@@ -140,6 +178,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+
 
                                 <!-- Edit Post Modal -->
                                 <div class="modal fade EditPostModal" id="EditPostModal{{$x}}" aria-hidden="true">
@@ -633,6 +673,33 @@
                         $('#user_posts').load(' #user_posts');
                         $('#notification').html(response.status);
                         $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('.commentResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.deleteComment_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == '200') {
+                        $('.DeleteModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_posts').load(' #user_posts');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-success').addClass('alert alert-danger');
                         $("#notification").show().delay(700).addClass("in").fadeOut(1000);
                     } else if (response.status == 'fail') {
                         let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';

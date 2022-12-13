@@ -81,8 +81,8 @@ td a {
 }
 
 .btn-primary:hover {
-    background-color: #9dbaff;
-    border-color: #9dbaff;
+    background-color: #9DBAFF;
+    border-color: #9DBAFF;
 }
 
 .btn-secondary {
@@ -98,8 +98,8 @@ td a {
 }
 
 .btn-secondary:hover {
-    background-color: #a5a6ff;
-    border-color: #a5a6ff;
+    background-color: #A5A6ff;
+    border-color: #A5A6ff;
 }
 
 .close {
@@ -132,12 +132,13 @@ td a {
 }
 
 .DeleteModal .modal-header {
-    background-color: #ff574d;
+    background-color: #FF574D;
 }
 
 .DeleteModal .modal-body {
     background-color: #FFFFFF;
-    color: #b34045;
+    color: #B34045;
+    font-size: 18px;
 }
 
 #notification {
@@ -152,7 +153,7 @@ td a {
 }
 
 .error-msg {
-    color: #b34045;
+    color: #B34045;
     font-size: 15px;
 }
 
@@ -161,7 +162,7 @@ td a {
     padding: 0px;
     border-radius: 5px;
     width: 100%;
-    margin:0;
+    margin: 0;
 }
 
 
@@ -236,7 +237,7 @@ td a {
     padding: 0 0;
     display: inline-block;
     margin-right: 20px;
-    color: #8899a6;
+    color: #8899A6;
     font-size: 22px;
     letter-spacing: 0.02em;
     overflow: hidden;
@@ -281,15 +282,25 @@ td a {
     padding: 10px;
     margin-bottom: 10px;
 }
-.comments{
-    background-color:#A460ED;
+
+.comments {
+    background-color: #9091F3;
     border-radius: 5px;
 }
-.comment{
-    padding:10px;
+
+.comment {
+    padding: 10px;
     border-radius: 5px;
-    border: 1px solid #9851e4;
+    border: 1px solid #8587E0;
 }
-.comment:hover{
-    background-color:#A66CFF;
+
+.comment:hover {
+    background-color: #9899FF;
+}
+
+.dlt-comment{
+    font-size: 15px;
+    color: #FF574D;
+    font-weight: 600;
+    cursor: pointer
 }
