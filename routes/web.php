@@ -16,6 +16,7 @@ use App\Http\Controllers\ClientControl;
 Route::get('/', [ClientControl::class,'home']);
 Route::post('/filter', [ClientControl::class,'filter'])->name('filter');
 Route::get('/todos/{id}/{page}',[ClientControl::class,'getUserTodos'])->name('posts.getusertodos');
+Route::get('/posts/{id}/{page}',[ClientControl::class,'getUserPosts'])->name('posts.getuserposts');
 
 Route::get('/users/page/{id}',[ClientControl::class,'getAllUser'])->name('posts.getalluser');
 Route::post('/addUser', [ClientControl::class,'adduser'])->name('adduser');
