@@ -28,6 +28,8 @@ Route::post('/addPost', [ClientControl::class,'addpost'])->name('addpost');
 Route::post('/editPost', [ClientControl::class,'editpost'])->name('editpost');
 Route::post('/deletePost', [ClientControl::class,'deletepost'])->name('deletepost');
 
+Route::post('/addComments', [ClientControl::class,'addcomment'])->name('addcomment');
+
 Route::post('/addTodos', [ClientControl::class,'addtodo'])->name('addtodo');
 Route::post('/editTodos', [ClientControl::class,'edittodo'])->name('edittodo');
 Route::post('/deleteTodos', [ClientControl::class,'deletetodo'])->name('deletetodo');

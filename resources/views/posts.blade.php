@@ -29,7 +29,6 @@
                             <option value="profile">profile</option>
                             <option value="todos">todos</option>
                             <option value="posts">posts</option>
-                            <option value="comments">comments</option>
                         </select>
                     </div>
                 </div>
@@ -49,36 +48,38 @@
 
         <div class="card">
             <div class="card-body" style="padding:0">
-                <table class="table table-hover" id="userPost_list" style="margin:0">
-                    <thead class="table-custom">
-                        <tr>
-                            <th>ID</th>
-                            <th>User ID</th>
-                            <th>Title</th>
-                            <th>Body</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        $i = 0
-                        @endphp
-                        @foreach ($data as $posts)
-                        <tr>
-                            <td width="5%">{{$posts['id']}}</td>
-                            <td>{{$posts['user_id']}}</td>
-                            <td>{{$posts['title']}}</td>
-                            <td>{{$posts['body']}}</td>
-                            <td width="10%"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditPostModal{{$i}}">EDIT</a></button></td>
-                            <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeletePostModal{{$i}}">DELETE</button></td>
-                        </tr>
-                        @php
-                        $i = $i+1;
-                        @endphp
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="userPost_list" style="margin:0">
+                        <thead class="table-custom">
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Title</th>
+                                <th>Body</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                            $i = 0
+                            @endphp
+                            @foreach ($data as $posts)
+                            <tr>
+                                <td width="5%">{{$posts['id']}}</td>
+                                <td>{{$posts['user_id']}}</td>
+                                <td>{{$posts['title']}}</td>
+                                <td>{{$posts['body']}}</td>
+                                <td width="10%"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditPostModal{{$i}}">EDIT</a></button></td>
+                                <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeletePostModal{{$i}}">DELETE</button></td>
+                            </tr>
+                            @php
+                            $i = $i+1;
+                            @endphp
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
                 <div id="deleteModal">
                     @php

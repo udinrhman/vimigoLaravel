@@ -29,7 +29,6 @@
                             <option value="profile">profile</option>
                             <option value="todos">todos</option>
                             <option value="posts">posts</option>
-                            <option value="comments">comments</option>
                         </select>
                     </div>
                 </div>
@@ -49,39 +48,40 @@
 
         <div class="card">
             <div class="card-body" style="padding:0">
-                <table class="table table-hover" id="userTodo_list" style="margin:0">
-                    <thead class="table-custom">
-                        <tr>
-                            <th>ID</th>
-                            <th>User ID</th>
-                            <th>Title</th>
-                            <th>Due On</th>
-                            <th>Status</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        $i = 0
-                        @endphp
-                        @foreach ($data as $todos)
-                        <tr>
-                            <td width="5%">{{$todos['id']}}</td>
-                            <td>{{$todos['user_id']}}</td>
-                            <td>{{$todos['title']}}</td>
-                            <td>{{$todos['due_on']}}</td>
-                            <td width="10%">{{$todos['status']}}</td>
-                            <td width="10%"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditTodoModal{{$i}}">EDIT</a></button></td>
-                            <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteTodoModal{{$i}}">DELETE</button></td>
-                        </tr>
-                        @php
-                        $i = $i+1;
-                        @endphp
-                        @endforeach
-                    </tbody>
-                </table>
-
+                <div class="table-responsive">
+                    <table class="table table-hover" id="userTodo_list" style="margin:0">
+                        <thead class="table-custom">
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Title</th>
+                                <th>Due On</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                            $i = 0
+                            @endphp
+                            @foreach ($data as $todos)
+                            <tr>
+                                <td width="5%">{{$todos['id']}}</td>
+                                <td>{{$todos['user_id']}}</td>
+                                <td>{{$todos['title']}}</td>
+                                <td>{{$todos['due_on']}}</td>
+                                <td width="10%">{{$todos['status']}}</td>
+                                <td width="10%"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditTodoModal{{$i}}">EDIT</a></button></td>
+                                <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteTodoModal{{$i}}">DELETE</button></td>
+                            </tr>
+                            @php
+                            $i = $i+1;
+                            @endphp
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 <div id="deleteModal">
                     @php
                     $x = 0

@@ -29,7 +29,6 @@
                             <option value="profile">profile</option>
                             <option value="todos">todos</option>
                             <option value="posts">posts</option>
-                            <option value="comments">comments</option>
                         </select>
                     </div>
                 </div>
@@ -43,39 +42,40 @@
         </div>
         <div class="card">
             <div class="card-body" style="padding:0">
-
-                <table class="table table-hover" id="user_list" style="margin:0">
-                    <thead class="table-custom">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Gender</th>
-                            <th>Status</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        $i = 0
-                        @endphp
-                        @foreach ($data as $user)
-                        <tr>
-                            <td width="5%">{{$user['id']}}</td>
-                            <td>{{$user['name']}}</td>
-                            <td>{{$user['email']}}</td>
-                            <td width="10%">{{$user['gender']}}</td>
-                            <td width="10%">{{$user['status']}}</td>
-                            <td width="10%"><a href={{"../../profile/".$user['id']}}><button class="btn btn-primary">VIEW PROFILE</a></button></td>
-                            <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteUserModal{{$i}}">DELETE</button></td>
-                        </tr>
-                        @php
-                        $i = $i+1;
-                        @endphp
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="user_list" style="margin:0">
+                        <thead class="table-custom">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                            $i = 0
+                            @endphp
+                            @foreach ($data as $user)
+                            <tr>
+                                <td width="5%">{{$user['id']}}</td>
+                                <td>{{$user['name']}}</td>
+                                <td>{{$user['email']}}</td>
+                                <td width="10%">{{$user['gender']}}</td>
+                                <td width="10%">{{$user['status']}}</td>
+                                <td width="10%"><a href={{"../../profile/".$user['id']}}><button class="btn btn-primary">VIEW PROFILE</a></button></td>
+                                <td width="10%"><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteUserModal{{$i}}">DELETE</button></td>
+                            </tr>
+                            @php
+                            $i = $i+1;
+                            @endphp
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
                 <div id="deleteModal">
                     @php

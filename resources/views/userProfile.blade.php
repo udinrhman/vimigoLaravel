@@ -30,7 +30,6 @@
                             <option value="profile">profile</option>
                             <option value="todos">todos</option>
                             <option value="posts">posts</option>
-                            <option value="comments">comments</option>
                         </select>
                     </div>
                 </div>
@@ -83,14 +82,63 @@
                                 <p style="color:#FFFFFF">This user doesn't have any posts.</p>
                                 @else
                                 @foreach($post as $posts)
+
                                 <div style="float:right;margin:10px;">
                                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditPostModal{{$x}}">EDIT</button> <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeletePostModal{{$x}}">DELETE</button>
                                 </div>
 
                                 <div class="post">
+                                    <p><span style="font-weight:600">ID: </span>{{$posts['id']}}</p>
                                     <p><span style="font-weight:600">Title: </span>{{$posts['title']}}</p>
                                     <p><span style="font-weight:600">Body: </span>{{$posts['body']}}</p>
                                     <p style="text-align:right;font-size:15px;margin-bottom:0;">posted by #{{$posts['user_id']}}</p>
+
+                                    <div class="comments">@foreach($comment as $comments)
+                                        @if($comments['post_id'] == $posts['id'])
+                                        <div class="comment">
+                                            <p style="font-size:15px;"><b>{{$comments['name']}} [{{$comments['email']}}]</b>: {{$comments['body']}}</p>
+                                        </div>
+                                        @endif
+                                        @endforeach
+                                    </div>
+
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddCommentModal{{$x}}">ADD COMMENT FOR THIS POST</button>
+                                </div>
+
+                                <!-- Add Comment Modal -->
+                                <div class="modal fade EditPostModal" id="AddCommentModal{{$x}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-md">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Add Comment for Post #{{$posts['id']}}</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="commentResult" style="font-size:16px;font-weight:lighter"></div>
+                                                <form class="addComment_form" action="{{ route('addcomment') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" class="token" id="token" value="{{ @csrf_token() }}">
+                                                    <input type="hidden" name="id" id="id" value="{{ $posts['id'] }}">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="email" id="email" placeholder="Email">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" name="body" id="body" placeholder="Body" rows="5"></textarea>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="reset" class="btn btn-light">RESET</button>
+                                                        <button type="submit" class="btn btn-secondary">ADD</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Edit Post Modal -->
@@ -354,7 +402,8 @@
                 </div>
                 <div class="modal-body">
                     <div id="postResult"></div>
-                    <form id="post_form" action="{{ route('addpost') }}">
+                    <form id="post_form" action="{{ route('addpost') }}" method="POST">
+                        @csrf
                         <input type="hidden" id="token" value="{{ @csrf_token() }}">
                         <input type="hidden" name="user_id" id="user_id" value="{{ $user['id'] }}">
                         <div class="form-group">
@@ -475,34 +524,32 @@
     </script>
 
     <script>
-        $(document).ready(function() {
-            $('#post_form').submit(function(e) {
-                e.preventDefault();
-                let url = $(this).attr('action');
-
-                $.post(url, {
-                        '_token': $('#token').val(),
-                        user_id: $('#user_id').val(),
-                        title: $('#title').val(),
-                        body: $('#body').val(),
-                    },
-                    function(response) {
-                        if (response.code == 400) {
-                            let error = '<span style="color:#b34045">' + response.msg + '</span>';
-                            $('#postResult').html(error);
-                        }
-                        if (response.code == 200) {
-                            $('#AddPostModal').modal('hide');
-                            $(".modal-backdrop").remove();
-                            $('#user_posts').load(' #user_posts');
-                            $('#notification').html(response.status);
-                            $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
-                            $("#notification").show().delay(700).addClass("in").fadeOut(1000);
-                        } else if (response.status == 'fail') {
-                            let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
-                            $('#postResult').html(error);
-                        }
-                    });
+        $(document).on('submit', '#post_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('#postResult').html(error);
+                    }
+                    if (response.code == 200) {
+                        $('#user_posts').load(' #user_posts');
+                        $('#AddPostModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('#postResult').html(error);
+                    }
+                },
             });
         });
     </script>
@@ -559,6 +606,37 @@
                     } else if (response.status == 'fail') {
                         let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
                         $('.postResult').html(error);
+                    }
+                },
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '.addComment_form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                success: function(response) {
+                    if (response.code == 400) {
+                        let error = '<span style="color:#b34045">' + response.msg + '</span>';
+                        $('.commentResult').html(error);
+                    }
+                    if (response.code == 200) {
+                        $('.EditPostModal').modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#user_posts').load(' #user_posts');
+                        $('#notification').html(response.status);
+                        $("#notification").removeClass('alert alert-danger').addClass('alert alert-success');
+                        $("#notification").show().delay(700).addClass("in").fadeOut(1000);
+                    } else if (response.status == 'fail') {
+                        let error = '<span class="error-msg">Error: ' + response.restmsg + '</span>';
+                        $('.commentResult').html(error);
                     }
                 },
             });

@@ -156,7 +156,7 @@ td a {
     font-size: 15px;
 }
 
-/* ----------------profile card------------ */
+/* ----------------profile ------------ */
 .profile {
     padding: 0px;
     border-radius: 5px;
@@ -280,4 +280,16 @@ td a {
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
+}
+.comments{
+    background-color:#A460ED;
+    border-radius: 5px;
+}
+.comment{
+    padding:10px;
+    border-radius: 5px;
+    border: 1px solid #9851e4;
+}
+.comment:hover{
+    background-color:#A66CFF;
 }

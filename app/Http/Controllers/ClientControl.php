@@ -76,7 +76,7 @@ class ClientControl extends Controller
         return view('todos', ['data' => $dataArray, 'page' => $page, 'totalPages' => $totalPages, 'user_id' => $id]);
     }
 
-    public function getUserPosts($id, $page) //list all todos for specific user id
+    public function getUserPosts($id, $page) //list all posts for specific user id
     {
         $response = Http::withToken(config('services.rest.token'))
             ->get('https://gorest.co.in/public/v2/users/' . $id . '/posts');
@@ -174,13 +174,18 @@ class ClientControl extends Controller
         $post = json_decode($postsResponse->getBody(), true); // returns an array
         $totalPost = count($post);
 
-        $todosResponse = Http::withToken(config('services.rest.token')) //get user posts
+        $todosResponse = Http::withToken(config('services.rest.token')) //get user todos
             ->get('https://gorest.co.in/public/v2/users/' . $id . '/todos');
         $todosResponse->json();
         $todo = json_decode($todosResponse->getBody(), true); // returns an array
         $totalTodo = count($todo);
 
-        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost' => $totalPost, 'todo' => $todo, 'totalTodo' => $totalTodo,]);
+        $commentsResponse = Http::withToken(config('services.rest.token')) //get comments
+            ->get('https://gorest.co.in/public/v2/comments');
+        $commentsResponse->json();
+        $comment = json_decode($commentsResponse->getBody(), true); // returns an array
+
+        return view('userProfile', ['user' => $user, 'post' => $post, 'totalPost' => $totalPost, 'todo' => $todo, 'totalTodo' => $totalTodo, 'comment' => $comment]);
     }
 
     public function edituser(Request $request) //edit specific user info
@@ -273,6 +278,35 @@ class ClientControl extends Controller
             return response()->json(['code' => 200, 'status' => 'Successfully Deleted']);
         } else {
             return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+        }
+    }
+
+    public function addcomment(Request $request) //add comment for specific user
+    {
+        $id = $request->input('id');
+        $validation = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email:filter', 'max:255'],
+            'body' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['code' => 400, 'msg' => $validation->errors()->first()]);
+        } else {
+            $response = Http::withToken(config('services.rest.token'))
+                ->post('https://gorest.co.in/public/v2/posts/' . $id . '/comments', [ //add comment for specific post
+                    'id' => '2635',
+                    'post_id' => $request->input('id'),
+                    'name' => $request->input('name'),
+                    'email' => $request->input('email'),
+                    'body' => $request->input('body'),
+                ]);
+            $response->json();
+            if ($response->successful() == 'true') {
+                return response()->json(['code' => 200, 'status' => 'Sucessfully Added']);
+            } else {
+                return response()->json(['status' => 'fail', 'restmsg' => $response->getStatusCode()]);
+            }
         }
     }
 
